@@ -39,8 +39,17 @@ if app_mode == "Business Strategy (PaaS)":
         st.metric("Model C: Kits", "Research Use Only", delta="Steady Revenue")
 
     st.subheader("Platform Workflow for Partners")
-    st.image("https://via.placeholder.com/1000x300.png?text=Partner+Antigen+Input+->+DoriNano+Optimization+->+Production+Ready+Design", use_container_width=True)
-    
+    st.graphviz_chart('''
+        digraph {
+            node [shape=box, style=filled, color="#004a7c", fontcolor=white, fontname="Helvetica"]
+            A [label="Partner's Antigen Data"]
+            B [label="DoriVac Nanospacing Simulation"]
+            C [label="DNA Origami Structure Design"]
+            D [label="Clinical-Ready Prototype"]
+            
+            A -> B -> C -> D
+        }
+    ''')
     with st.expander("상업화 가속을 위한 기대 효과"):
         st.markdown("""
         * **Time-to-Market:** 독자적인 플랫폼 구축 없이 도리나노의 검증된 구조체 활용 (개발 기간 50% 단축)

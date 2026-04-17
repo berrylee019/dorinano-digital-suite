@@ -17,7 +17,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # --- [1] 사이드바 내비게이션 ---
-st.sidebar.image("https://images.squarespace-cdn.com/content/v1/63ff9e359f14061a9956f4d2/88f2882c-4f74-4b95-9b0c-9333333d455b/DoriNano_Logo_Horizontal_Color.png", width=200) # 도리나노 로고(예시)
+st.sidebar.info("MisaTech AI")
 st.sidebar.title("Digital Twin Menu")
 app_mode = st.sidebar.radio("Select Module", 
     ["Business Strategy (PaaS)", "Nanospacing Optimizer", "3D Architecture Visualizer", "Batch Analytics (CMC)"])

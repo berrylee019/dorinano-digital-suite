@@ -23,7 +23,7 @@ app_mode = st.sidebar.radio("Select Module",
     ["Business Strategy (PaaS)", "Nanospacing Optimizer", "3D Architecture Visualizer", "Batch Analytics (CMC)"])
 
 st.sidebar.markdown("---")
-st.sidebar.info("Developed by [이병서/MisaTech]\n\nContact: [bslee@yahoo.com]")
+st.sidebar.info("Developed by 이병서/MisaTech\n\nContact: bslee@yahoo.com")
 
 # --- [2] 모듈 1: 비즈니스화 전략 (Business Strategy) ---
 if app_mode == "Business Strategy (PaaS)":

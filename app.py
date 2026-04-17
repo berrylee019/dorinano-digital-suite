@@ -17,7 +17,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # --- [1] 사이드바 내비게이션 ---
-st.sidebar.info("MisaTech AI")
+st.sidebar.info("")
 st.sidebar.title("Digital Twin Menu")
 app_mode = st.sidebar.radio("Select Module", 
     ["Business Strategy (PaaS)", "Nanospacing Optimizer", "3D Architecture Visualizer", "Batch Analytics (CMC)"])

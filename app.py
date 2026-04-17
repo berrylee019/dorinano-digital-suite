@@ -27,7 +27,7 @@ st.sidebar.info("Developed by MisaTech\n\nContact: bslee@yahoo.com")
 
 # --- [2] 모듈 1: 비즈니스화 전략 (Business Strategy) ---
 if app_mode == "Business Strategy (PaaS)":
-    st.header("🚀 Business Strategy: DoriVac-as-a-Service (PaaS)")
+    st.header(" Business Strategy: DoriVac-as-a-Service (PaaS)")
     st.write("도리나노의 DNA 오리가미 플랫폼을 전 세계 제약사에 라이선싱하는 비즈니스 모델 제안입니다.")
     
     col1, col2, col3 = st.columns(3)
@@ -59,7 +59,7 @@ if app_mode == "Business Strategy (PaaS)":
 
 # --- [3] 모듈 2: 나노 간격 최적화기 (Nanospacing Optimizer) ---
 elif app_mode == "Nanospacing Optimizer":
-    st.header("📏 DoriVac Nanospacing Optimizer")
+    st.header(" DoriVac Nanospacing Optimizer")
     st.write("면역 반응을 극대화하는 '3.5nm의 골든 법칙'을 실험 전 시뮬레이션합니다.")
     
     col_in, col_out = st.columns([1, 2])
@@ -89,7 +89,7 @@ elif app_mode == "Nanospacing Optimizer":
 
 # --- [4] 모듈 3: 3D 구조 시각화 (3D Architecture Visualizer) ---
 elif app_mode == "3D Architecture Visualizer":
-    st.header("🧬 3D DNA-Origami Architecture")
+    st.header(" 3D DNA-Origami Architecture")
     st.write("설계된 DNA 구조체와 항원 결합 지점을 3차원으로 미리 확인합니다.")
     
     # 실제 구현 시 py3Dmol을 사용하나, 웹 데모용으로 Plotly 3D Scatter 활용
@@ -108,11 +108,11 @@ elif app_mode == "3D Architecture Visualizer":
     fig.update_layout(title="Scaffold Structure & Ligand Positions", margin=dict(l=0, r=0, b=0, t=40))
     st.plotly_chart(fig, use_container_width=True)
     
-    st.write("💡 **Feature:** CAD 없이도 웹에서 시퀀스 기반의 3D 구조 무결성을 즉각 검토 가능")
+    st.write(" **Feature:** CAD 없이도 웹에서 시퀀스 기반의 3D 구조 무결성을 즉각 검토 가능")
 
 # --- [5] 모듈 4: 생산 품질 분석 (Batch Analytics) ---
 elif app_mode == "Batch Analytics (CMC)":
-    st.header("📊 Batch Analytics & Quality Control")
+    st.header(" Batch Analytics & Quality Control")
     st.write("상업화를 위한 필수 단계인 생산 공정(CMC) 데이터를 관리합니다.")
     
     # 가상 데이터 생성

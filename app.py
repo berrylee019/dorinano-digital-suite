@@ -3,6 +3,20 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
+import streamlit.components.v1 as components
+
+# 1. 구글 애널리틱스 연동 코드
+GA_ID = "G-JTR9EHWGTR"  # 여기에 발급받으신 ID를 넣으세요
+
+ga_code = f"""
+    <script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){{dataLayer.push(arguments);}}
+        gtag('js', new Date());
+        gtag('config', '{GA_ID}');
+    </script>
+"""
 
 # --- [0] 기본 설정 및 테마 ---
 st.set_page_config(page_title="DoriNano Digital Suite", layout="wide", page_icon="🧬")

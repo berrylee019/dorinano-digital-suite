@@ -109,7 +109,8 @@ elif menu == "Nano-Spacing Optimizer":
             x=x_pos, y=[6]*antigen_count, z=[0.8]*antigen_count,
             mode='markers+text',
             text=[f"Ag {i+1}" for i in range(antigen_count)],
-            marker=dict(size=12, color='red', symbol='sphere', line=dict(color='white', width=2)),
+            # symbol을 'sphere'에서 'circle'로 변경했습니다.
+            marker=dict(size=12, color='red', symbol='circle', line=dict(color='white', width=2)),
             name="Neoantigens"
         ))
         

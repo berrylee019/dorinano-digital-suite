@@ -74,7 +74,7 @@ elif menu == "Antigen AI Link":
         })
         st.table(df_sample)
     else:
-        st.warning("분석할 AI 데이터 파일을 업로드해 주세요. (미팅 시 데모용 샘플 사용 가능)")
+        st.warning("분석할 AI 데이터 파일을 업로드해 주세요.")
 
 # --- Module 3: Nano-Spacing Optimizer (핵심 시뮬레이터) ---
 elif menu == "Nano-Spacing Optimizer":

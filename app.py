@@ -58,7 +58,7 @@ if menu == "Executive Dashboard":
 elif menu == "Antigen AI Link":
     st.title("🧬 Antigen Discovery Integration")
     st.subheader("AI-Driven Neoantigen Identification")
-    st.info("카이스트 최정균 교수팀의 AI 모델(T세포/B세포 동시 예측) 데이터를 수신하는 게이트웨이입니다.")
+    st.info("카이스트 AI 모델(T세포/B세포 동시 예측) 데이터를 수신하는 게이트웨이입니다.")
     
     uploaded_file = st.file_uploader("AI 분석 결과 파일 업로드 (JSON/CSV)", type=['csv', 'json'])
     

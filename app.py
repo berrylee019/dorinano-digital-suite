@@ -1,150 +1,168 @@
 import streamlit as st
-import pandas as pd
 import numpy as np
-import plotly.express as px
 import plotly.graph_objects as go
-import streamlit.components.v1 as components
+import pandas as pd
+import time
 
-# 1. 구글 애널리틱스 연동 코드
-GA_ID = "G-JTR9EHWGTR"  # 여기에 발급받으신 ID를 넣으세요
+# 1. 페이지 및 테마 설정
+st.set_page_config(
+    page_title="DoriNano Digital Suite",
+    page_icon="🧬",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-ga_code = f"""
-    <script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){{dataLayer.push(arguments);}}
-        gtag('js', new Date());
-        gtag('config', '{GA_ID}');
-    </script>
-"""
-
-# --- [0] 기본 설정 및 테마 ---
-st.set_page_config(page_title="DoriNano Digital Suite", layout="wide", page_icon="🧬")
-
-# 도리나노 브랜드 컬러 (Teal & Dark Navy) 반영 스타일링
+# 커스텀 CSS (전문적인 메디컬 테크 느낌 연출)
 st.markdown("""
     <style>
     .main { background-color: #f8f9fa; }
-    .stMetric { background-color: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-    h1, h2, h3 { color: #004a7c; }
+    .stMetric { background-color: #ffffff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .sidebar .sidebar-content { background-image: linear-gradient(#2e7bcf, #052b5e); color: white; }
+    h1 { color: #0f3d7a; }
+    h2 { color: #1a5fb4; border-left: 5px solid #1a5fb4; padding-left: 10px; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- [1] 사이드바 내비게이션 ---
-st.sidebar.info("")
-st.sidebar.title("Digital Twin Menu")
-app_mode = st.sidebar.radio("Select Module", 
-    ["Business Strategy (PaaS)", "Nanospacing Optimizer", "3D Architecture Visualizer", "Batch Analytics (CMC)"])
+# 2. 사이드바 내비게이션
+st.sidebar.title("🚀 DoriVac OS v1.0")
+st.sidebar.markdown("---")
+menu = st.sidebar.radio(
+    "Select Module",
+    ["Executive Dashboard", "Antigen AI Link", "Nano-Spacing Optimizer", "Project Report"]
+)
 
 st.sidebar.markdown("---")
-st.sidebar.info("Developed by MisaTech\n\nContact: bslee@yahoo.com")
+st.sidebar.info("Developed by [Your Name/Company]\n\nPartner: DoriNano (Prof. Ryu Ju-hee)")
 
-# --- [2] 모듈 1: 비즈니스화 전략 (Business Strategy) ---
-if app_mode == "Business Strategy (PaaS)":
-    st.header(" Business Strategy: DoriVac-as-a-Service (PaaS)")
-    st.write("도리나노의 DNA 오리가미 플랫폼을 전 세계 제약사에 라이선싱하는 비즈니스 모델 제안입니다.")
+# 3. 메뉴별 기능 구현
+
+# --- Module 1: Dashboard ---
+if menu == "Executive Dashboard":
+    st.title("📊 Platform Executive Overview")
+    st.markdown("도리나노 DNA 오리가미 백신의 상용화 및 가치 증명을 위한 통합 대시보드입니다.")
     
     col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric("Model A: PaaS", "Scaffold Licensing", delta="High Scalability")
-    with col2:
-        st.metric("Model B: On-Demand", "Personalized Neoantigen", delta="High Margin")
-    with col3:
-        st.metric("Model C: Kits", "Research Use Only", delta="Steady Revenue")
+    col1.metric("Current R&D Stage", "Pre-clinical", "Phase 1 Entry Ready")
+    col2.metric("Optimal Spacing", "3.5 nm", "Targeted")
+    col3.metric("Discovery Efficiency", "85% ↑", "vs Wet-lab")
+    
+    st.markdown("---")
+    st.subheader("💡 Digital Twin Roadmap")
+    st.write("""
+    - **Step 1:** 카이스트 최정균 교수팀 AI 연동을 통한 개인 맞춤형 항원(Neoantigen) 확보
+    - **Step 2:** 도리나노 '나노-스페이싱' 시뮬레이터를 통한 최적 면역 반응 설계
+    - **Step 3:** 인실리코(In-silico) 검증 기반의 임상 가속화 및 비용 절감
+    """)
 
-    st.subheader("Platform Workflow for Partners")
-    st.graphviz_chart('''
-        digraph {
-            node [shape=box, style=filled, color="#004a7c", fontcolor=white, fontname="Helvetica"]
-            A [label="Partner's Antigen Data"]
-            B [label="DoriVac Nanospacing Simulation"]
-            C [label="DNA Origami Structure Design"]
-            D [label="Clinical-Ready Prototype"]
+# --- Module 2: Antigen AI Link ---
+elif menu == "Antigen AI Link":
+    st.title("🧬 Antigen Discovery Integration")
+    st.subheader("AI-Driven Neoantigen Identification")
+    st.info("카이스트 최정균 교수팀의 AI 모델(T세포/B세포 동시 예측) 데이터를 수신하는 게이트웨이입니다.")
+    
+    uploaded_file = st.file_uploader("AI 분석 결과 파일 업로드 (JSON/CSV)", type=['csv', 'json'])
+    
+    if uploaded_file is not None:
+        with st.spinner('AI 데이터를 분석 중...'):
+            time.sleep(1.5)
+            st.success("데이터 로드 완료: 12개의 유효 신생 항원이 발견되었습니다.")
             
-            A -> B -> C -> D
-        }
-    ''')
-    with st.expander("상업화 가속을 위한 기대 효과"):
-        st.markdown("""
-        * **Time-to-Market:** 독자적인 플랫폼 구축 없이 도리나노의 검증된 구조체 활용 (개발 기간 50% 단축)
-        * **Regulatory Advantage:** 표준화된 DNA 구조체 사용으로 CMC 데이터 확보 용이
-        * **Precision Medicine:** 환자별 맞춤 항원을 즉각 조립하여 '암 백신 4.0' 시대 선도
-        """)
+        df_sample = pd.DataFrame({
+            "Antigen_ID": [f"AG-{i:03d}" for i in range(1, 7)],
+            "Binding_Affinity": [0.98, 0.95, 0.88, 0.82, 0.79, 0.75],
+            "Priority": ["High", "High", "Mid", "Mid", "Low", "Low"]
+        })
+        st.table(df_sample)
+    else:
+        st.warning("분석할 AI 데이터 파일을 업로드해 주세요. (미팅 시 데모용 샘플 사용 가능)")
 
-# --- [3] 모듈 2: 나노 간격 최적화기 (Nanospacing Optimizer) ---
-elif app_mode == "Nanospacing Optimizer":
-    st.header(" DoriVac Nanospacing Optimizer")
-    st.write("면역 반응을 극대화하는 '3.5nm의 골든 법칙'을 실험 전 시뮬레이션합니다.")
+# --- Module 3: Nano-Spacing Optimizer (핵심 시뮬레이터) ---
+elif menu == "Nano-Spacing Optimizer":
+    st.title("🔬 Nano-Spacing Optimizer")
+    st.markdown("DNA 오리가미 구조체 위에서 항원의 배치를 0.1nm 단위로 시뮬레이션합니다.")
     
-    col_in, col_out = st.columns([1, 2])
+    # 조절 영역 (사이드바가 아닌 메인 상단에 배치하여 박사님이 집중하게 함)
+    c1, c2 = st.columns([1, 1])
+    with c1:
+        spacing = st.slider("📐 Antigen Spacing (nm)", 1.0, 10.0, 3.5, 0.1)
+    with c2:
+        antigen_count = st.number_input("🔢 Number of Antigens", 1, 20, 6)
     
-    with col_in:
-        st.subheader("Simulation Parameters")
-        target_receptor = st.selectbox("Target Receptor", ["CD40", "TLR9", "OX40", "Custom"])
-        ligand_type = st.radio("Ligand Type", ["CpG", "Peptide Antigen", "Antibody Fragment"])
-        spacing = st.slider("Spacing (nm)", 1.0, 10.0, 3.5, step=0.1)
-        density = st.number_input("Ligand Density (per Scaffold)", 1, 20, 6)
-
-    with col_out:
-        # 가상 최적화 로직: 3.5nm에서 정규분포 형태로 피크 발생
-        x = np.linspace(1, 10, 100)
-        y = np.exp(-(x - 3.5)**2 / (2 * 1.2**2)) * 100 # Gaussian peak at 3.5nm
+    st.markdown("---")
+    
+    col_left, col_right = st.columns([1, 1])
+    
+    with col_left:
+        st.subheader("🌐 3D Structure Twin")
+        # 3D 시각화 (도리백 판 위 항원 배치)
+        fig_3d = go.Figure()
         
-        fig = px.line(x=x, y=y, labels={'x':'Spacing (nm)', 'y':'Immune Activation (%)'},
-                     title=f"Predicted Activation for {target_receptor}")
-        fig.add_vline(x=spacing, line_dash="dash", line_color="red", annotation_text="Selected")
-        # 3.5nm 최적점 표시
-        fig.add_annotation(x=3.5, y=100, text="Optimal (3.5nm)", showarrow=True, arrowhead=1)
+        # DNA 오리가미 베이스 판
+        fig_3d.add_trace(go.Mesh3d(
+            x=[0, 12, 12, 0], y=[0, 0, 12, 12], z=[0, 0, 0, 0], 
+            color='lightgray', opacity=0.3, name="DoriVac Base"
+        ))
         
-        st.plotly_chart(fig, use_container_width=True)
+        # 항원 배치 로직
+        x_pos = np.arange(antigen_count) * (spacing / 2)
+        fig_3d.add_trace(go.Scatter3d(
+            x=x_pos, y=[6]*antigen_count, z=[0.8]*antigen_count,
+            mode='markers+text',
+            text=[f"Ag {i+1}" for i in range(antigen_count)],
+            marker=dict(size=12, color='red', symbol='sphere', line=dict(color='white', width=2)),
+            name="Neoantigens"
+        ))
         
-        st.success(f"**Result:** Spacing of {spacing}nm yields {y[np.abs(x-spacing).argmin()]:.1f}% immune efficiency.")
-        st.info("이 시뮬레이션은 반복적인 실험(Wet-lab) 횟수를 획기적으로 줄여주는 비즈니스 핵심 도구입니다.")
+        fig_3d.update_layout(
+            margin=dict(l=0, r=0, b=0, t=0),
+            scene=dict(
+                xaxis_title='X (nm)', yaxis_title='Y (nm)', zaxis_title='Z (nm)',
+                aspectmode='manual', aspectratio=dict(x=2, y=1, z=0.5)
+            )
+        )
+        st.plotly_chart(fig_3d, use_container_width=True)
 
-# --- [4] 모듈 3: 3D 구조 시각화 (3D Architecture Visualizer) ---
-elif app_mode == "3D Architecture Visualizer":
-    st.header(" 3D DNA-Origami Architecture")
-    st.write("설계된 DNA 구조체와 항원 결합 지점을 3차원으로 미리 확인합니다.")
-    
-    # 실제 구현 시 py3Dmol을 사용하나, 웹 데모용으로 Plotly 3D Scatter 활용
-    # 형님, 실제 박사님께 보낼 때는 py3Dmol 라이브러리를 임베딩한 코드를 넣으면 더 강력합니다.
-    
-    z = np.linspace(0, 10, 50)
-    theta = np.linspace(-4 * np.pi, 4 * np.pi, 50)
-    x = np.cos(theta)
-    y = np.sin(theta)
-    
-    fig = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z, mode='lines', line=dict(color='#004a7c', width=6))])
-    # 항원 부착 지점 표시
-    fig.add_trace(go.Scatter3d(x=[x[10], x[25], x[40]], y=[y[10], y[25], y[40]], z=[z[10], z[25], z[40]],
-                               mode='markers', marker=dict(size=10, color='red'), name='Ligand Attachment'))
-    
-    fig.update_layout(title="Scaffold Structure & Ligand Positions", margin=dict(l=0, r=0, b=0, t=40))
-    st.plotly_chart(fig, use_container_width=True)
-    
-    st.write(" **Feature:** CAD 없이도 웹에서 시퀀스 기반의 3D 구조 무결성을 즉각 검토 가능")
+    with col_right:
+        st.subheader("📈 Immune Efficacy Prediction")
+        # 가우시안 곡선 (3.5nm에서 피크)
+        x_range = np.linspace(1, 10, 100)
+        y_range = np.exp(-((x_range - 3.5)**2) / (2 * 1.2**2)) 
+        current_val = np.exp(-((spacing - 3.5)**2) / (2 * 1.2**2))
+        
+        fig_line = go.Figure()
+        fig_line.add_trace(go.Scatter(x=x_range, y=y_range, name="Efficiency Curve", line=dict(color='#1a5fb4', width=3)))
+        fig_line.add_trace(go.Scatter(
+            x=[spacing], y=[current_val], 
+            mode='markers+text', 
+            text=[f"Efficiency: {current_val:.1%}"],
+            textposition="top right",
+            marker=dict(color='red', size=18, symbol='star'),
+            name="Current Setting"
+        ))
+        
+        fig_line.update_layout(
+            xaxis_title="Spacing (nm)", 
+            yaxis_title="Immune Activation Score",
+            hovermode="x unified"
+        )
+        st.plotly_chart(fig_line, use_container_width=True)
+        
+        if 3.3 <= spacing <= 3.7:
+            st.balloons()
+            st.success("🎯 Optimal Spacing (3.5nm) Reached! 면역 반응이 극대화되는 지점입니다.")
+        else:
+            st.warning(f"최적 간격(3.5nm)까지 {abs(3.5-spacing):.1f}nm 조정이 필요합니다.")
 
-# --- [5] 모듈 4: 생산 품질 분석 (Batch Analytics) ---
-elif app_mode == "Batch Analytics (CMC)":
-    st.header(" Batch Analytics & Quality Control")
-    st.write("상업화를 위한 필수 단계인 생산 공정(CMC) 데이터를 관리합니다.")
+# --- Module 4: Report ---
+elif menu == "Project Report":
+    st.title("📋 Project Simulation Report")
+    st.write("분석된 데이터를 기반으로 합성 공정 가이드라인을 생성합니다.")
     
-    # 가상 데이터 생성
-    df = pd.DataFrame({
-        'Batch_ID': [f'LOT-{i:03d}' for i in range(1, 11)],
-        'Yield (%)': np.random.normal(85, 5, 10),
-        'Purity (%)': np.random.normal(92, 2, 10),
-        'Stability (Days)': [30, 28, 35, 40, 32, 45, 38, 33, 31, 29]
-    })
+    report_data = {
+        "Parameter": ["Target Antigen", "Antigen Count", "Simulated Spacing", "Predicted Efficacy", "Complexity Score"],
+        "Value": ["Patient-A-01 (Neoantigen)", "6 units", "3.5 nm (Optimal)", "98.2%", "Low (Standardized)"]
+    }
+    st.table(pd.DataFrame(report_data))
     
-    col1, col2 = st.columns(2)
-    with col1:
-        st.subheader("Production Yield Trend")
-        st.bar_chart(df.set_index('Batch_ID')['Yield (%)'])
-    with col2:
-        st.subheader("Batch Purity vs Stability")
-        fig = px.scatter(df, x='Purity (%)', y='Stability (Days)', size='Yield (%)', 
-                         color='Batch_ID', hover_name='Batch_ID')
-        st.plotly_chart(fig, use_container_width=True)
-
-    st.warning("Batch LOT-004 shows high stability but lower purity. Action required.")
+    st.button("📥 Download PDF Report (Mockup)")
+    st.button("🧪 Export DNA Sequence for Synthesis")

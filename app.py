@@ -32,7 +32,7 @@ menu = st.sidebar.radio(
 )
 
 st.sidebar.markdown("---")
-st.sidebar.info("Developed by [Your Name/Company]\n\nPartner: DoriNano (Prof. Ryu Ju-hee)")
+st.sidebar.info("Developed by MisaTech\n\nPartner: DoriNano")
 
 # 3. 메뉴별 기능 구현
 

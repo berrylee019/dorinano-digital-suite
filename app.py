@@ -49,7 +49,7 @@ if menu == "Executive Dashboard":
     st.markdown("---")
     st.subheader("💡 Digital Twin Roadmap")
     st.write("""
-    - **Step 1:** 카이스트 최정균 교수팀 AI 연동을 통한 개인 맞춤형 항원(Neoantigen) 확보
+    - **Step 1:** 카이스트 팀 AI 연동을 통한 개인 맞춤형 항원(Neoantigen) 확보
     - **Step 2:** 도리나노 '나노-스페이싱' 시뮬레이터를 통한 최적 면역 반응 설계
     - **Step 3:** 인실리코(In-silico) 검증 기반의 임상 가속화 및 비용 절감
     """)

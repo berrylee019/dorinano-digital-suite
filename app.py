@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 import pandas as pd
 import time
 
-# 1. 페이지 설정 및 세션 상태 초기화
+# 1. 페이지 및 테마 설정
 st.set_page_config(
     page_title="DoriNano Digital Suite",
     page_icon="🧬",
@@ -12,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 화면 전환을 위한 상태 관리
+# 화면 전환을 위한 세션 상태 초기화
 if 'view_mode' not in st.session_state:
     st.session_state.view_mode = 'internal'
 
@@ -24,33 +24,38 @@ def switch_to_internal():
     st.session_state.view_mode = 'internal'
     st.rerun()
 
-# 2. 커스텀 CSS
+# 커스텀 CSS (기존 디자인 유지 + 골드 버튼 추가)
 st.markdown("""
     <style>
     .main { background-color: #f8f9fa; }
-    h1 { color: #0f3d7a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    h2 { color: #1a5fb4; border-left: 5px solid #1a5fb4; padding-left: 10px; }
     .stMetric { background-color: #ffffff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .sidebar .sidebar-content { background-image: linear-gradient(#2e7bcf, #052b5e); color: white; }
+    h1 { color: #0f3d7a; }
+    h2 { color: #1a5fb4; border-left: 5px solid #1a5fb4; padding-left: 10px; }
     
-    /* 샌드박스 진입 골드 버튼 스타일 */
-    .sandbox-btn-container button {
-        width: 100%;
-        border-radius: 12px;
-        height: 4.5em;
-        font-size: 1.2em !important;
-        font-weight: bold !important;
-        background-color: #D4AF37 !important; /* Gold */
+    /* 골드 샌드박스 버튼 스타일 */
+    .sandbox-container {
+        text-align: center;
+        padding: 40px 0;
+    }
+    div.stButton > button:first-child {
+        background-color: #0f3d7a;
+        color: white;
+    }
+    /* 특정 클래스 내의 버튼을 골드로 설정 */
+    .gold-btn button {
+        background-color: #D4AF37 !important;
         color: white !important;
         border: 2px solid #B8860B !important;
-        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-        transition: all 0.3s;
+        font-size: 1.2em !important;
+        font-weight: bold !important;
+        height: 3.5em !important;
+        width: 100% !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4) !important;
     }
-    .sandbox-btn-container button:hover {
-        background-color: #B8860B !important;
-        transform: translateY(-2px);
-    }
-
-    /* 파트너 배너 */
+    
+    /* 파트너 배너 스타일 */
     .partner-banner { 
         background-color: #ffffff; 
         padding: 25px; 
@@ -64,11 +69,11 @@ st.markdown("""
 
 
 # =========================================================================
-# 모드 1: [INTERNAL] 연구용 대시보드
+# [모드 1] INTERNAL (기존 연구용 대시보드 구조)
 # =========================================================================
 if st.session_state.view_mode == 'internal':
 
-    # 사이드바
+    # 2. 사이드바 내비게이션
     st.sidebar.title("🚀 DoriVac OS v1.0")
     st.sidebar.markdown("---")
     menu = st.sidebar.radio(
@@ -78,7 +83,7 @@ if st.session_state.view_mode == 'internal':
     st.sidebar.markdown("---")
     st.sidebar.info("Developed by MisaTech\n\nPartner: DoriNano")
 
-    # --- Module 1: Executive Dashboard (여기에만 버튼 추가) ---
+    # --- Module 1: Dashboard ---
     if menu == "Executive Dashboard":
         st.title("📊 Platform Executive Overview")
         st.markdown("도리나노 DNA 오리가미 백신의 상용화 및 가치 증명을 위한 통합 대시보드입니다.")
@@ -96,97 +101,113 @@ if st.session_state.view_mode == 'internal':
         - **Step 3:** 인실리코(In-silico) 검증 기반의 임상 가속화 및 비용 절감
         """)
 
-        # [핵심] 오직 Dashboard 메뉴 하단에만 나타나는 골드 버튼 섹션
+        # 하단 샌드박스 전환 섹션 (Executive Dashboard에만 표시)
         st.markdown("<br><br><br><hr>", unsafe_allow_html=True)
         st.markdown("### 🌐 Global Business Expansion")
-        st.info("💡 **박사님 필살기:** 글로벌 제약사(다이이찌산쿄 등) 전용 기술 시연 환경으로 전환합니다.")
+        st.info("글로벌 제약사(다이이찌산쿄 등) 전용 기술 시연 환경을 확인하시겠습니까?")
         
-        col_btn_l, col_btn_m, col_btn_r = st.columns([1, 2, 1])
-        with col_btn_m:
-            st.markdown('<div class="sandbox-btn-container">', unsafe_allow_html=True)
-            if st.button("🚀 Open Global Partner Sandbox (Daiichi Sankyo Demo)"):
+        col_l, col_m, col_r = st.columns([1, 2, 1])
+        with col_m:
+            st.markdown('<div class="gold-btn">', unsafe_allow_html=True)
+            if st.button("🚀 Open Global Partner Sandbox (PaaS Demo)"):
                 switch_to_sandbox()
             st.markdown('</div>', unsafe_allow_html=True)
 
     # --- Module 2: Antigen AI Link ---
     elif menu == "Antigen AI Link":
         st.title("🧬 Antigen Discovery Integration")
+        st.subheader("AI-Driven Neoantigen Identification")
+        st.info("카이스트 AI 모델(T세포/B세포 동시 예측) 데이터를 수신하는 게이트웨이입니다.")
         uploaded_file = st.file_uploader("AI 분석 결과 파일 업로드 (JSON/CSV)", type=['csv', 'json'])
-        if uploaded_file:
-            st.success("데이터 로드 완료: 12개의 유효 신생 항원이 발견되었습니다.")
+        if uploaded_file is not None:
+            with st.spinner('AI 데이터를 분석 중...'):
+                time.sleep(1.5)
+                st.success("데이터 로드 완료: 12개의 유효 신생 항원이 발견되었습니다.")
+                df_sample = pd.DataFrame({
+                    "Antigen_ID": [f"AG-{i:03d}" for i in range(1, 7)],
+                    "Binding_Affinity": [0.98, 0.95, 0.88, 0.82, 0.79, 0.75],
+                    "Priority": ["High", "High", "Mid", "Mid", "Low", "Low"]
+                })
+                st.table(df_sample)
         else:
             st.warning("분석할 AI 데이터 파일을 업로드해 주세요.")
 
     # --- Module 3: Nano-Spacing Optimizer ---
     elif menu == "Nano-Spacing Optimizer":
         st.title("🔬 Nano-Spacing Optimizer")
-        c1, c2 = st.columns(2)
-        with c1: spacing = st.slider("📐 Antigen Spacing (nm)", 1.0, 10.0, 3.5, 0.1)
-        with c2: antigen_count = st.number_input("🔢 Number of Antigens", 1, 20, 6)
-        
-        col_l, col_r = st.columns(2)
-        with col_l:
-            # 3D 가상 구조 (기존 로직 유지)
-            fig_3d = go.Figure(data=[go.Scatter3d(x=np.random.rand(antigen_count), y=np.random.rand(antigen_count), z=np.random.rand(antigen_count), mode='markers', marker=dict(size=10, color='red'))])
-            fig_3d.update_layout(margin=dict(l=0, r=0, b=0, t=0))
-            st.plotly_chart(fig_3d)
-        with col_r:
-            st.info("3.5nm 간격 도달 시 면역 활성화가 극대화됩니다.")
-            if 3.4 <= spacing <= 3.6: st.balloons()
+        st.markdown("DNA 오리가미 구조체 위에서 항원의 배치를 0.1nm 단위로 시뮬레이션합니다.")
+        c1, c2 = st.columns([1, 1])
+        with c1:
+            spacing = st.slider("📐 Antigen Spacing (nm)", 1.0, 10.0, 3.5, 0.1)
+        with c2:
+            antigen_count = st.number_input("🔢 Number of Antigens", 1, 20, 6)
+        st.markdown("---")
+        col_left, col_right = st.columns([1, 1])
+        with col_left:
+            st.subheader("🌐 3D Structure Twin")
+            fig_3d = go.Figure()
+            fig_3d.add_trace(go.Mesh3d(x=[0, 12, 12, 0], y=[0, 0, 12, 12], z=[0, 0, 0, 0], color='lightgray', opacity=0.3))
+            x_pos = np.arange(antigen_count) * (spacing / 2)
+            fig_3d.add_trace(go.Scatter3d(x=x_pos, y=[6]*antigen_count, z=[0.8]*antigen_count, mode='markers+text', text=[f"Ag {i+1}" for i in range(antigen_count)], marker=dict(size=12, color='red', symbol='circle', line=dict(color='white', width=2))))
+            fig_3d.update_layout(margin=dict(l=0, r=0, b=0, t=0), scene=dict(xaxis_title='X (nm)', yaxis_title='Y (nm)', zaxis_title='Z (nm)', aspectmode='manual', aspectratio=dict(x=2, y=1, z=0.5)))
+            st.plotly_chart(fig_3d, use_container_width=True)
+        with col_right:
+            st.subheader("📈 Immune Efficacy Prediction")
+            x_range = np.linspace(1, 10, 100)
+            y_range = np.exp(-((x_range - 3.5)**2) / (2 * 1.2**2))
+            current_val = np.exp(-((spacing - 3.5)**2) / (2 * 1.2**2))
+            fig_line = go.Figure()
+            fig_line.add_trace(go.Scatter(x=x_range, y=y_range, name="Efficiency Curve", line=dict(color='#1a5fb4', width=3)))
+            fig_line.add_trace(go.Scatter(x=[spacing], y=[current_val], mode='markers+text', text=[f"Efficiency: {current_val:.1%}"], marker=dict(color='red', size=18, symbol='star')))
+            st.plotly_chart(fig_line, use_container_width=True)
+            if 3.3 <= spacing <= 3.7:
+                st.balloons()
+                st.success("🎯 Optimal Spacing (3.5nm) Reached!")
+            else:
+                st.warning(f"최적 간격(3.5nm)까지 {abs(3.5-spacing):.1f}nm 조정 필요")
 
     # --- Module 4: Report ---
     elif menu == "Project Report":
         st.title("📋 Project Simulation Report")
-        st.table(pd.DataFrame({"Parameter": ["Target", "Antigen Count", "Spacing Status"], "Value": ["HNSCC (Head & Neck)", f"{antigen_count} units", "Optimized"]}))
-        st.button("📥 Download PDF Report")
-
+        report_data = {"Parameter": ["Target Antigen", "Antigen Count", "Simulated Spacing", "Predicted Efficacy"], "Value": ["Patient-A-01", "6 units", "3.5 nm", "98.2%"]}
+        st.table(pd.DataFrame(report_data))
+        st.button("📥 Download PDF Report (Mockup)")
 
 # =========================================================================
-# 모드 2: [SANDBOX] 글로벌 파트너 전용 포털 (반전 화면)
+# [모드 2] SANDBOX (글로벌 파트너 전용 화면)
 # =========================================================================
 else:
-    # 파트너 포털 전용 사이드바
     st.sidebar.title("🤝 Partner Portal")
-    st.sidebar.write("Project: DS-Collaboration")
     if st.sidebar.button("⬅️ Back to Internal R&D"):
         switch_to_internal()
-    
-    # 파트너 전용 배너
+
     st.markdown(f"""
         <div class="partner-banner">
-            <h1 style="color:#ed1c24; margin:0; font-size: 2.5em;">[🤝 Daiichi Sankyo Partner Portal]</h1>
-            <p style="color:#333; margin:10px 0 0 0; font-size: 1.2em; font-weight:bold;">DoriVac™ Digital Showroom for Global Collaboration</p>
-            <p style="color:#666; margin:0;">Secure Session ID: DS-2026-BOS | Status: Encrypted</p>
+            <h1 style="color:#ed1c24; margin:0; font-size: 2.3em;">[🤝 Daiichi Sankyo Partner Portal]</h1>
+            <p style="color:#333; margin:10px 0 0 0; font-weight:bold;">Welcome to DoriVac™ Digital Showroom</p>
+            <p style="color:#666; margin:0;">Status: Secure Session Active | Session ID: DS-RX-9912</p>
         </div>
     """, unsafe_allow_html=True)
 
-    col_in, col_out = st.columns([1, 2])
-    
-    with col_in:
-        st.subheader("🛠️ Step 1: Input Your Cargo")
-        cargo = st.selectbox("Cargo Modality", ["Antibody-Drug Conjugate", "mRNA/siRNA", "Protein Antigen"])
-        st.subheader("🔬 Step 2: Virtual Assembly")
-        spacing_p = st.slider("Target Nanolink Spacing (nm)", 1.0, 10.0, 3.5, 0.1)
+    c_in, c_sim = st.columns([1, 2])
+    with c_in:
+        st.subheader("🛠️ Step 1: Input Cargo")
+        cargo_type = st.selectbox("Cargo Modality", ["Protein/Antigen", "Nucleic Acid", "Small Molecule"])
+        st.subheader("🔬 Step 2: Design")
+        spacing_p = st.slider("Target Spacing (nm)", 1.0, 10.0, 3.5, 0.1)
         sim_btn = st.button("▶️ Run Matching Simulation", type="primary")
 
-    with col_out:
-        st.subheader("🌐 Step 3: Digital Twin Visualizer")
+    with c_sim:
+        st.subheader("🌐 Step 3: Digital Twin")
         if sim_btn:
-            with st.spinner("Analyzing Compatibility..."):
+            with st.spinner("Analyzing..."):
                 time.sleep(1.5)
-                st.success("Simulation Complete")
-                st.markdown("""
-                    <div style="background-color: #f1f3f5; padding: 20px; border-radius: 10px; border-left: 10px solid #ed1c24;">
-                        <h3 style="margin-top:0;">📋 Efficacy Prediction Report</h3>
-                        <p><strong>Target Matching Score:</strong> <span style="color:red; font-size:1.5em;">98.4%</span></p>
-                        <p><strong>Predicted Immune Response:</strong> 3.2x Higher than LNP</p>
-                    </div>
-                """, unsafe_allow_html=True)
-                fig = go.Figure(data=[go.Scatter3d(x=np.random.rand(10), y=np.random.rand(10), z=np.random.rand(10), mode='markers', marker=dict(size=8, color='#ed1c24'))])
-                st.plotly_chart(fig)
+                st.success("Compatibility Analysis Complete")
+                st.metric("Predicted Efficacy Score", f"{(np.exp(-((spacing_p - 3.5)**2) / 2) * 100):.1f}%")
+                st.info("📋 [Efficacy Prediction Report]가 생성되었습니다. 아래에서 상담을 요청하세요.")
         else:
-            st.info("시뮬레이션 실행 버튼을 누르면 성적표가 생성됩니다.")
+            st.info("시뮬레이션을 실행하여 최적 적합성을 확인하세요.")
 
     st.markdown("---")
-    st.subheader("📩 Step 4: [Request Expert Review]")
-    st.button("Submit Request to DoriNano Tech Team")
+    st.subheader("☎️ Step 4: Expert Bridge")
+    st.button("📩 [Request Expert Review]")

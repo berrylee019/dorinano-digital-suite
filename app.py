@@ -12,6 +12,48 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# =========================================================================
+# [SECURITY] 비밀번호 보안 설정 함수
+# =========================================================================
+def check_password():
+    """비밀번호가 올바른지 확인하는 함수"""
+    def password_entered():
+        """입력된 비밀번호를 검증하고 세션 상태를 업데이트"""
+        if st.session_state["password"] == "3.5nm":  # <--- 형님, 여기서 비밀번호 수정하세요!
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # 보안을 위해 세션에서 비밀번호 삭제
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        # 로그인 화면 UI
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.title("🧬 DoriVac Digital Suite")
+            st.info("이 시스템은 보안 구역입니다. 승인된 연구원만 접근 가능합니다.")
+            st.text_input("Security Password", type="password", on_change=password_entered, key="password")
+            st.caption("비밀번호를 입력하고 Enter를 눌러주세요.")
+        return False
+    elif not st.session_state["password_correct"]:
+        # 비밀번호가 틀렸을 때
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.title("🧬 DoriVac Digital Suite")
+            st.text_input("Security Password", type="password", on_change=password_entered, key="password")
+            st.error("😕 비밀번호가 일치하지 않습니다 형님. 다시 확인해주세요.")
+        return False
+    else:
+        # 비밀번호가 맞았을 때
+        return True
+
+# 보안 체크 실행
+if check_password():
+
+    # =========================================================================
+    # [MAIN APP] 로그인 성공 시에만 실행되는 코드 영역
+    # =========================================================================
+    
 # 세션 상태 초기화
 if 'view_mode' not in st.session_state:
     st.session_state.view_mode = 'internal'

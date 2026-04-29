@@ -31,7 +31,12 @@ def check_password():
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             st.title("🧬 DoriVac Digital Suite")
-            st.info("이 시스템은 보안 구역입니다. 승인된 연구원만 접근 가능합니다.")
+            st.info("""
+            **[Security Alert]**
+            이 시스템은 보안 구역입니다. 승인된 연구원만 접근 가능합니다.
+
+            *Secure Access Zone. Entry is restricted to authorized researchers only.*
+            """)
             st.text_input("Security Password", type="password", on_change=password_entered, key="password")
             st.caption("비밀번호를 입력하고 Enter를 눌러주세요.")
         return False

@@ -194,7 +194,7 @@ if check_password():
         
         st.markdown("""
             <div class="partner-banner">
-                <h1 style="color:#ed1c24; margin:0; font-size: 2.3em;">[🤝 Daiichi Sankyo Partner Portal]</h1>
+                <h1 style="color:#ed1c24; margin:0; font-size: 2.3em;">[Glabal Pharmaceutical company Partner Portal]</h1>
                 <p style="color:#555; margin-top:5px;">Secure Sandbox for Cargo-to-Vehicle Matching Simulation</p>
             </div>
         """, unsafe_allow_html=True)

@@ -113,7 +113,7 @@ if check_password():
     # 모드 1: [INTERNAL] 연구용 대시보드 (기존 기능 유지)
     # =========================================================================
     if st.session_state.view_mode == 'internal':
-        st.sidebar.title("🚀 DoriVac OS v1.0")
+        st.sidebar.title(" DoriVac OS v1.0")
         st.sidebar.markdown("---")
         menu = st.sidebar.radio("Select Module", ["Executive Dashboard", "Antigen AI Link", "Nano-Spacing Optimizer", "Project Report"])
         st.sidebar.markdown("---")
@@ -126,14 +126,14 @@ if check_password():
             col2.metric("Optimal Spacing", "3.5 nm", "Targeted")
             col3.metric("Discovery Efficiency", "85% ↑", "vs Wet-lab")
             st.markdown("---")
-            st.subheader("💡 Digital Twin Roadmap")
+            st.subheader(" Digital Twin Roadmap")
             st.write("- **Step 1:** AI 항원 확보 / **Step 2:** 나노-스페이싱 시뮬레이션 / **Step 3:** 임상 가속화")
             st.markdown("<br><br><br><hr>", unsafe_allow_html=True)
             st.markdown("### 🌐 Global Business Expansion")
             col_l, col_m, col_r = st.columns([1, 2, 1])
             with col_m:
                 st.markdown('<div class="gold-btn">', unsafe_allow_html=True)
-                if st.button("🚀 Open Global Partner Sandbox (Daiichi Sankyo Demo)"):
+                if st.button(" Open Global Partner Sandbox (Daiichi Sankyo Demo)"):
                     switch_to_sandbox()
                 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -189,7 +189,7 @@ if check_password():
     # 모드 2: [SANDBOX] 글로벌 파트너 전용 (시나리오 2, 3번 강화 섹션)
     # =========================================================================
     else:
-        st.sidebar.title("🤝 Partner Portal")
+        st.sidebar.title(" Partner Portal")
         if st.sidebar.button("⬅️ Back to Internal R&D"): switch_to_internal()
         
         st.markdown("""

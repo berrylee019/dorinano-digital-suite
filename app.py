@@ -183,7 +183,59 @@ if check_password():
 
         elif menu == "Project Report":
             st.title("📋 Project Simulation Report")
-            st.table(pd.DataFrame({"Parameter": ["Target", "Spacing"], "Value": ["Patient-A-01", "3.5nm"]}))
+            
+            # --- [종합 분석 대시보드] 업그레이드 부분 시작 ---
+            st.subheader("📊 [종합 분석 대시보드]")
+            
+            # 1. 핵심 성과 지표 (KPI Metrics)
+            kpi1, kpi2, kpi3, kpi4 = st.columns(4)
+            kpi1.metric("최종 매칭 스코어", "98.2%", "↑ 1.5%")
+            kpi2.metric("예상 면역 증강", "4.5x", "vs LNP")
+            kpi3.metric("나노 안전성", "Stable", "Optimum")
+            kpi4.metric("R&D 가속도", "3.2개월", "단축 완료")
+            
+            st.markdown("<br>", unsafe_allow_html=True)
+            
+            # 2. 다각도 분석 시각화 (Radar Chart & Summary)
+            col_chart, col_summary = st.columns([1.5, 1])
+            
+            with col_chart:
+                categories = ['Efficacy', 'Safety', 'Stability', 'Scalability', 'Cost-Efficiency']
+                fig_radar = go.Figure()
+                fig_radar.add_trace(go.Scatterpolar(
+                    r=[95, 88, 92, 85, 90],
+                    theta=categories,
+                    fill='toself',
+                    name='Current Project',
+                    line_color='#ed1c24'
+                ))
+                fig_radar.update_layout(
+                    polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
+                    showlegend=False,
+                    margin=dict(l=40, r=40, t=40, b=40),
+                    height=400
+                )
+                st.plotly_chart(fig_radar, use_container_width=True)
+                
+            with col_summary:
+                st.info("**💡 연구원 종합 코멘트 (AI Summary)**")
+                st.markdown("""
+                현재 **Patient-A-01** 프로젝트에 적용된 나노-스페이싱 기술은 3.5nm 황금 비율에 도달하여 수용체 결합력을 극대화했습니다.
+                
+                * **강점:** 기존 알룸(Alum) 대비 4배 이상의 면역 반응 예측.
+                * **보완:** 스케일업(Scalability) 지표가 85%로, 대량 생산 공정 최적화가 다음 단계의 핵심 과제입니다.
+                * **결론:** Wet-lab 기반의 세포 독성 테스트 진입에 '적합' 판정을 내립니다.
+                """)
+                st.warning("**차기 마일스톤:** Phase 1 진입을 위한 공식 서류 제출 대기 중.")
+
+            st.markdown("---")
+            # --- [종합 분석 대시보드] 업그레이드 부분 끝 ---
+
+            st.subheader("📝 세부 파라미터 내역")
+            st.table(pd.DataFrame({
+                "Parameter": ["Target Project", "Optimal Spacing", "Ligand Type", "Simulation ID", "Researcher"], 
+                "Value": ["Patient-A-01", "3.5nm", "Protein Antigen", "Dori-2026-04-A", "Senior Research Team"]
+            }))
 
     # =========================================================================
     # 모드 2: [SANDBOX] 글로벌 파트너 전용 (시나리오 2, 3번 강화 섹션)
@@ -194,7 +246,7 @@ if check_password():
         
         st.markdown("""
             <div class="partner-banner">
-                <h1 style="color:#ed1c24; margin:0; font-size: 2.3em;">[Glabal Pharmaceutical company Partner Portal]</h1>
+                <h1 style="color:#ed1c24; margin:0; font-size: 2.3em;">[Global Pharmaceutical Partner Portal]</h1>
                 <p style="color:#555; margin-top:5px;">Secure Sandbox for Cargo-to-Vehicle Matching Simulation</p>
             </div>
         """, unsafe_allow_html=True)
@@ -203,7 +255,6 @@ if check_password():
         
         with c_in:
             st.subheader("🛠️ Step 1 & 2: Cargo Input")
-            # 시나리오 2번: 드롭다운 및 파일 업로드 시뮬레이션
             cargo_type = st.selectbox("1. Select Cargo Modality", ["Antibody-Drug Conjugate (ADC)", "mRNA / siRNA", "Protein Antigen", "Custom Ligand"])
             
             st.markdown("**2. Upload Undisclosed Antigen Data (Private)**")
@@ -221,7 +272,6 @@ if check_password():
                 with st.spinner("계산 중... 3.5nm 황금 로직을 기반으로 적합성을 분석합니다."):
                     time.sleep(2.0)
                     
-                    # 시나리오 3번: [Efficacy Prediction Report] 성적표 발행 로직
                     score = (np.exp(-((spacing_p - 3.5)**2) / 2) * 100)
                     efficiency_boost = score * 1.45  # 가상의 LNP 대비 효율 상승분
                     cost_saving = (100 - score) * 0.05 + 2.8  # 가상의 비용 절감 수치 ($M)
@@ -251,7 +301,6 @@ if check_password():
                         </div>
                     """, unsafe_allow_html=True)
                     
-                    # 시각화 부분
                     fig_p = go.Figure()
                     fig_p.add_trace(go.Mesh3d(x=[0, 12, 12, 0], y=[0, 12, 12, 0], z=[0, 0, 0, 0], color='lightgray', opacity=0.3))
                     x_p = np.arange(cargo_count) * (spacing_p / 2)

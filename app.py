@@ -3,6 +3,7 @@ import numpy as np
 import plotly.graph_objects as go
 import pandas as pd
 import time
+import json # 데이터 패킷 생성을 위해 추가
 
 # 1. 페이지 및 테마 설정
 st.set_page_config(
@@ -300,6 +301,29 @@ if check_password():
                             </p>
                         </div>
                     """, unsafe_allow_html=True)
+                    
+                    # --- [추가] 실질적인 실험 레시피 다운로드 버튼 섹션 (핵심 수정 사항) ---
+                    recipe_data = {
+                        "project": "Global-Partner-Sandbox",
+                        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+                        "modality": cargo_type,
+                        "parameters": {
+                            "spacing_nm": spacing_p,
+                            "cargo_count": cargo_count,
+                            "matching_score": f"{score:.1f}%"
+                        },
+                        "formulation_guide": "Use DNA Origami Scaffold Type-B with 3.5nm anchor points."
+                    }
+                    
+                    st.download_button(
+                        label="📥 Download Formulation Recipe (JSON)",
+                        data=json.dumps(recipe_data, indent=2),
+                        file_name=f"DoriVac_Recipe_{cargo_type}.json",
+                        mime="application/json",
+                        use_container_width=True
+                    )
+                    st.caption("※ 이 레시피는 시뮬레이션 기반의 합성 데이터 패킷입니다.")
+                    # ------------------------------------------------------------------
                     
                     fig_p = go.Figure()
                     fig_p.add_trace(go.Mesh3d(x=[0, 12, 12, 0], y=[0, 12, 12, 0], z=[0, 0, 0, 0], color='lightgray', opacity=0.3))

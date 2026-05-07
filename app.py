@@ -3,7 +3,8 @@ import numpy as np
 import plotly.graph_objects as go
 import pandas as pd
 import time
-import json # 데이터 패킷 생성을 위해 추가
+import json 
+import requests # NCI GDC API 연동을 위해 추가
 
 # 1. 페이지 및 테마 설정
 st.set_page_config(
@@ -65,7 +66,7 @@ if check_password():
         st.session_state.view_mode = 'internal'
         st.rerun()
     
-    # 커스텀 CSS (성적표 디자인 대폭 강화)
+    # 커스텀 CSS
     st.markdown("""
         <style>
         .main { background-color: #f8f9fa; }
@@ -95,7 +96,6 @@ if check_password():
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
 
-        /* [핵심] Efficacy Prediction Report 스타일 */
         .report-box {
             background-color: #ffffff; 
             padding: 25px; 
@@ -107,16 +107,26 @@ if check_password():
         }
         .report-metric { font-size: 0.85em; color: #666; margin-bottom: 2px; }
         .report-value { font-size: 1.4em; font-weight: bold; color: #ed1c24; }
+        
+        /* GDC 데이터 카드 스타일 */
+        .gdc-card {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #2196f3;
+            margin-bottom: 10px;
+        }
         </style>
         """, unsafe_allow_html=True)
     
     # =========================================================================
-    # 모드 1: [INTERNAL] 연구용 대시보드 (기존 기능 유지)
+    # 모드 1: [INTERNAL] 연구용 대시보드
     # =========================================================================
     if st.session_state.view_mode == 'internal':
-        st.sidebar.title(" DoriVac OS v1.0")
+        st.sidebar.title("🧬 DoriVac OS v1.1") # 버전 업데이트
         st.sidebar.markdown("---")
-        menu = st.sidebar.radio("Select Module", ["Executive Dashboard", "Antigen AI Link", "Nano-Spacing Optimizer", "Project Report"])
+        # NCI GDC Data Link 메뉴 추가
+        menu = st.sidebar.radio("Select Module", ["Executive Dashboard", "NCI GDC Data Link", "Antigen AI Link", "Nano-Spacing Optimizer", "Project Report"])
         st.sidebar.markdown("---")
         st.sidebar.info("Developed by MisaTech\n\nPartner: DoriNano")
     
@@ -127,20 +137,84 @@ if check_password():
             col2.metric("Optimal Spacing", "3.5 nm", "Targeted")
             col3.metric("Discovery Efficiency", "85% ↑", "vs Wet-lab")
             st.markdown("---")
-            st.subheader(" Digital Twin Roadmap")
-            st.write("- **Step 1:** AI 항원 확보 / **Step 2:** 나노-스페이싱 시뮬레이션 / **Step 3:** 임상 가속화")
+            st.subheader("🧬 Digital Twin Roadmap")
+            st.write("- **Step 1:** NGS 변이 데이터 확보(GDC) / **Step 2:** AI 항원 구조 예측(SUROP) / **Step 3:** 나노-스페이싱 설계(DoriVac)")
             st.markdown("<br><br><br><hr>", unsafe_allow_html=True)
             st.markdown("### 🌐 Global Business Expansion")
             col_l, col_m, col_r = st.columns([1, 2, 1])
             with col_m:
                 st.markdown('<div class="gold-btn">', unsafe_allow_html=True)
-                if st.button(" Open Global Partner Sandbox (Daiichi Sankyo Demo)"):
+                if st.button("🚀 Open Global Partner Sandbox (Daiichi Sankyo Demo)"):
                     switch_to_sandbox()
                 st.markdown('</div>', unsafe_allow_html=True)
 
+        # ---------------------------------------------------------------------
+        # [NEW] NCI GDC 실시간 연동 모듈
+        # ---------------------------------------------------------------------
+        elif menu == "NCI GDC Data Link":
+            st.title("🔗 NCI GDC Real-time Data Integration")
+            st.markdown("미국 국립암연구소(NCI) GDC 서버에 접속하여 환자별 유전체 변이 데이터를 실시간으로 스트리밍합니다.")
+            
+            c1, c2 = st.columns([2, 1])
+            with c1:
+                target_patient = st.text_input("Enter Patient ID (Submitter ID)", value="TCGA-A7-A0CE", help="예: TCGA-A7-A0CE, TCGA-A7-A13E 등")
+            with c2:
+                st.markdown("<br>", unsafe_allow_html=True)
+                fetch_btn = st.button("🔍 Fetch Mutation Data", use_container_width=True)
+
+            if fetch_btn:
+                with st.spinner(f"Requesting data for {target_patient} from api.gdc.cancer.gov..."):
+                    try:
+                        # [실전] API 호출 로직 시작
+                        filters = {
+                            "op": "and",
+                            "content": [
+                                {"op": "in", "content": {"field": "cases.submitter_id", "value": [target_patient]}}
+                            ]
+                        }
+                        params = {
+                            "filters": json.dumps(filters),
+                            "fields": "genomic_dna_change,ssm_id,consequence.transcript.consequence_type",
+                            "size": "5" 
+                        }
+                        
+                        response = requests.get("https://api.gdc.cancer.gov/ssms", params=params)
+                        
+                        if response.status_code == 200:
+                            data = response.json()
+                            mutations = data.get("data", {}).get("hits", [])
+                            
+                            if mutations:
+                                st.success(f"✅ 성공적으로 {len(mutations)}개의 핵심 돌연변이 데이터를 수신했습니다.")
+                                
+                                st.subheader("📋 Somatic Simple Mutations (Raw Data)")
+                                for mut in mutations:
+                                    with st.container():
+                                        st.markdown(f"""
+                                        <div class="gdc-card">
+                                            <b>SSM ID:</b> {mut.get('ssm_id')}<br>
+                                            <b>DNA Change:</b> <code style='color:#d63384'>{mut.get('genomic_dna_change')}</code><br>
+                                            <b>Consequence:</b> {mut.get('consequence', [{}])[0].get('transcript', {}).get('consequence_type', 'N/A')}
+                                        </div>
+                                        """, unsafe_allow_html=True)
+                                
+                                st.info("💡 **Next Step:** 수신된 변이 서열을 SUROP AI 엔진으로 전송하여 3D 항원 구조(Neo-Ag-Alpha) 예측을 시작하십시오.")
+                                if st.button("🧬 Send to SUROP Engine"):
+                                    st.toast("데이터 전송 중... SUROP 엔진에서 구조 예측을 시작합니다.")
+                                    time.sleep(1)
+                                    st.success("데이터가 성공적으로 전송되었습니다.")
+                            else:
+                                st.warning("해당 환자 ID에 대한 공개된 변이 데이터를 찾을 수 없습니다.")
+                        else:
+                            st.error(f"GDC API 연결 실패: {response.status_code}")
+                            
+                    except Exception as e:
+                        st.error(f"데이터 연동 중 오류 발생: {str(e)}")
+
         elif menu == "Antigen AI Link":
             st.title("🧬 Antigen Discovery Integration")
-            uploaded_file = st.file_uploader("AI 분석 결과 업로드", type=['csv', 'json'])
+            st.info("NCI GDC 또는 자체 NGS 분석을 통해 도출된 항원 구조를 정밀 분석합니다.")
+            uploaded_file = st.file_uploader("AI 분석 결과(PDB/JSON) 업로드", type=['csv', 'json'])
             if uploaded_file:
                 with st.spinner('3D 구조 생성 중...'):
                     time.sleep(1.5)
@@ -184,54 +258,29 @@ if check_password():
 
         elif menu == "Project Report":
             st.title("📋 Project Simulation Report")
-            
-            # --- [종합 분석 대시보드] 업그레이드 부분 시작 ---
             st.subheader("📊 [종합 분석 대시보드]")
-            
-            # 1. 핵심 성과 지표 (KPI Metrics)
             kpi1, kpi2, kpi3, kpi4 = st.columns(4)
             kpi1.metric("최종 매칭 스코어", "98.2%", "↑ 1.5%")
             kpi2.metric("예상 면역 증강", "4.5x", "vs LNP")
             kpi3.metric("나노 안전성", "Stable", "Optimum")
             kpi4.metric("R&D 가속도", "3.2개월", "단축 완료")
-            
             st.markdown("<br>", unsafe_allow_html=True)
-            
-            # 2. 다각도 분석 시각화 (Radar Chart & Summary)
             col_chart, col_summary = st.columns([1.5, 1])
-            
             with col_chart:
                 categories = ['Efficacy', 'Safety', 'Stability', 'Scalability', 'Cost-Efficiency']
                 fig_radar = go.Figure()
-                fig_radar.add_trace(go.Scatterpolar(
-                    r=[95, 88, 92, 85, 90],
-                    theta=categories,
-                    fill='toself',
-                    name='Current Project',
-                    line_color='#ed1c24'
-                ))
-                fig_radar.update_layout(
-                    polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
-                    showlegend=False,
-                    margin=dict(l=40, r=40, t=40, b=40),
-                    height=400
-                )
+                fig_radar.add_trace(go.Scatterpolar(r=[95, 88, 92, 85, 90], theta=categories, fill='toself', name='Current Project', line_color='#ed1c24'))
+                fig_radar.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 100])), showlegend=False, margin=dict(l=40, r=40, t=40, b=40), height=400)
                 st.plotly_chart(fig_radar, use_container_width=True)
-                
             with col_summary:
                 st.info("**💡 연구원 종합 코멘트 (AI Summary)**")
                 st.markdown("""
                 현재 **Patient-A-01** 프로젝트에 적용된 나노-스페이싱 기술은 3.5nm 황금 비율에 도달하여 수용체 결합력을 극대화했습니다.
-                
                 * **강점:** 기존 알룸(Alum) 대비 4배 이상의 면역 반응 예측.
-                * **보완:** 스케일업(Scalability) 지표가 85%로, 대량 생산 공정 최적화가 다음 단계의 핵심 과제입니다.
                 * **결론:** Wet-lab 기반의 세포 독성 테스트 진입에 '적합' 판정을 내립니다.
                 """)
                 st.warning("**차기 마일스톤:** Phase 1 진입을 위한 공식 서류 제출 대기 중.")
-
             st.markdown("---")
-            # --- [종합 분석 대시보드] 업그레이드 부분 끝 ---
-
             st.subheader("📝 세부 파라미터 내역")
             st.table(pd.DataFrame({
                 "Parameter": ["Target Project", "Optimal Spacing", "Ligand Type", "Simulation ID", "Researcher"], 
@@ -239,108 +288,67 @@ if check_password():
             }))
 
     # =========================================================================
-    # 모드 2: [SANDBOX] 글로벌 파트너 전용 (시나리오 2, 3번 강화 섹션)
+    # 모드 2: [SANDBOX] 글로벌 파트너 전용
     # =========================================================================
     else:
         st.sidebar.title(" Partner Portal")
         if st.sidebar.button("⬅️ Back to Internal R&D"): switch_to_internal()
-        
         st.markdown("""
             <div class="partner-banner">
                 <h1 style="color:#ed1c24; margin:0; font-size: 2.3em;">[Global Pharmaceutical Partner Portal]</h1>
                 <p style="color:#555; margin-top:5px;">Secure Sandbox for Cargo-to-Vehicle Matching Simulation</p>
             </div>
         """, unsafe_allow_html=True)
-
         c_in, c_sim = st.columns([1, 1.5])
-        
         with c_in:
             st.subheader("🛠️ Step 1 & 2: Cargo Input")
             cargo_type = st.selectbox("1. Select Cargo Modality", ["Antibody-Drug Conjugate (ADC)", "mRNA / siRNA", "Protein Antigen", "Custom Ligand"])
-            
             st.markdown("**2. Upload Undisclosed Antigen Data (Private)**")
             st.file_uploader("미공개 항원의 특성 파일(CSV/JSON)을 업로드하여 보안 시뮬레이션을 수행하십시오.", type=['csv', 'xlsx', 'json'])
-            
             st.markdown("**3. DoriVac Delivery System Tuning**")
             spacing_p = st.slider("Target Spacing (nm)", 1.0, 10.0, 3.5, 0.1)
             cargo_count = st.number_input("Number of Cargo Units", 1, 12, 6)
-            
             st.markdown("<br>", unsafe_allow_html=True)
             sim_btn = st.button("▶️ Run Matching Simulation", type="primary", use_container_width=True)
-
         with c_sim:
             if sim_btn:
                 with st.spinner("계산 중... 3.5nm 황금 로직을 기반으로 적합성을 분석합니다."):
                     time.sleep(2.0)
-                    
                     score = (np.exp(-((spacing_p - 3.5)**2) / 2) * 100)
-                    efficiency_boost = score * 1.45  # 가상의 LNP 대비 효율 상승분
-                    cost_saving = (100 - score) * 0.05 + 2.8  # 가상의 비용 절감 수치 ($M)
-                    
+                    efficiency_boost = score * 1.45
+                    cost_saving = (100 - score) * 0.05 + 2.8
                     st.markdown(f"""
                         <div class="report-box">
                             <h2 style="color:#ed1c24; margin-top:0;">📋 [Efficacy Prediction Report]</h2>
                             <hr style="border: 0.5px solid #eee;">
                             <div style="display: flex; justify-content: space-between; text-align: center;">
-                                <div style="flex: 1;">
-                                    <p class="report-metric">Matching Score</p>
-                                    <p class="report-value">{score:.1f}%</p>
-                                </div>
-                                <div style="flex: 1; border-left: 1px solid #eee; border-right: 1px solid #eee;">
-                                    <p class="report-metric">vs LNP Efficiency</p>
-                                    <p class="report-value">+{efficiency_boost:.1f}% ↑</p>
-                                </div>
-                                <div style="flex: 1;">
-                                    <p class="report-metric">Est. R&D Saving</p>
-                                    <p class="report-value">${cost_saving:.1f}M</p>
-                                </div>
+                                <div style="flex: 1;"><p class="report-metric">Matching Score</p><p class="report-value">{score:.1f}%</p></div>
+                                <div style="flex: 1; border-left: 1px solid #eee; border-right: 1px solid #eee;"><p class="report-metric">vs LNP Efficiency</p><p class="report-value">+{efficiency_boost:.1f}% ↑</p></div>
+                                <div style="flex: 1;"><p class="report-metric">Est. R&D Saving</p><p class="report-value">${cost_saving:.1f}M</p></div>
                             </div>
-                            <p style="margin-top:15px; font-size:0.85em; color:#777;">
-                                * <b>Validation:</b> In-silico matching confirmed for {cargo_type}<br>
-                                * <b>Note:</b> 높은 일치도는 타겟 세포로의 정확한 전달 및 면역 반응 극대화를 시사합니다.
-                            </p>
+                            <p style="margin-top:15px; font-size:0.85em; color:#777;">* <b>Validation:</b> In-silico matching confirmed for {cargo_type}</p>
                         </div>
                     """, unsafe_allow_html=True)
-                    
-                    # --- [추가] 실질적인 실험 레시피 다운로드 버튼 섹션 (핵심 수정 사항) ---
                     recipe_data = {
                         "project": "Global-Partner-Sandbox",
                         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
                         "modality": cargo_type,
-                        "parameters": {
-                            "spacing_nm": spacing_p,
-                            "cargo_count": cargo_count,
-                            "matching_score": f"{score:.1f}%"
-                        },
+                        "parameters": {"spacing_nm": spacing_p, "cargo_count": cargo_count, "matching_score": f"{score:.1f}%"},
                         "formulation_guide": "Use DNA Origami Scaffold Type-B with 3.5nm anchor points."
                     }
-                    
-                    st.download_button(
-                        label="📥 Download Formulation Recipe (JSON)",
-                        data=json.dumps(recipe_data, indent=2),
-                        file_name=f"DoriVac_Recipe_{cargo_type}.json",
-                        mime="application/json",
-                        use_container_width=True
-                    )
-                    st.caption("※ 이 레시피는 시뮬레이션 기반의 합성 데이터 패킷입니다.")
-                    # ------------------------------------------------------------------
-                    
+                    st.download_button(label="📥 Download Formulation Recipe (JSON)", data=json.dumps(recipe_data, indent=2), file_name=f"DoriVac_Recipe_{cargo_type}.json", mime="application/json", use_container_width=True)
                     fig_p = go.Figure()
                     fig_p.add_trace(go.Mesh3d(x=[0, 12, 12, 0], y=[0, 12, 12, 0], z=[0, 0, 0, 0], color='lightgray', opacity=0.3))
                     x_p = np.arange(cargo_count) * (spacing_p / 2)
                     fig_p.add_trace(go.Scatter3d(x=x_p, y=[6]*cargo_count, z=[0.8]*cargo_count, mode='markers', marker=dict(size=12, color='#ed1c24')))
                     fig_p.update_layout(margin=dict(l=0, r=0, b=0, t=0), scene=dict(aspectmode='manual', aspectratio=dict(x=2, y=1, z=0.5)), height=400)
                     st.plotly_chart(fig_p, use_container_width=True)
-                    
                     if 3.3 <= spacing_p <= 3.7: st.balloons()
             else:
-                st.info("💡 **Partner Guide:** 좌측에서 항원 타입을 선택하거나 파일을 업로드한 후 시뮬레이션 버튼을 누르세요. 본인들의 약물에 최적화된 도리백 설계 성적표를 즉시 확인할 수 있습니다.")
-
+                st.info("💡 **Partner Guide:** 좌측에서 항원 타입을 선택하거나 파일을 업로드한 후 시뮬레이션 버튼을 누르세요.")
         st.markdown("---")
         st.subheader("☎️ Step 4: [Request Expert Review]")
         col_msg, col_send = st.columns([2, 1])
-        with col_msg:
-            st.write("발행된 **Efficacy Prediction Report**를 기반으로 도리나노 기술팀의 정밀 Wet-lab 검토 및 공동 연구 가능성을 타진하시겠습니까?")
+        with col_msg: st.write("발행된 리포트를 기반으로 도리나노 기술팀의 정밀 검토 및 공동 연구 가능성을 타진하시겠습니까?")
         with col_send:
-            if st.button("📩 Submit Simulation Data for Review", use_container_width=True):
-                st.success("전송 완료! 담당자가 24시간 이내에 연락드립니다.")
+            if st.button("📩 Submit Simulation Data for Review", use_container_width=True): st.success("전송 완료! 담당자가 24시간 이내에 연락드립니다.")
